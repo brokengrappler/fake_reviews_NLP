@@ -37,12 +37,13 @@ def filter_words(text_tok):
     Filter stop words and custom (hotel) words and all verbs
     '''
     filtered_word_list=[]
-    pos_filter = ['VB', 'VBN','VBD', 'VBG', 'VBP', 'VBZ', 'NNP', 'NNPS']
+    pos_filter = ['VB', 'VBN','VBD', 'VBG', 'VBP', 'VBZ', 'NNP', 'NNPS', 'NNP']
     cust_sw = stopwords.words('english')
-    hotel_sw = ['room','chicago','hotel','downtown', 'michigan']
-    cust_sw.append(hotel_sw)
+    hotel_sw = ['room','chicago','hotel','downtown', 'michigan', 'just',
+                'hard', 'rock', 'because', 'this']
+    cust_sw = cust_sw + hotel_sw
     for word in text_tok:
-        if (word not in cust_sw) or (pos_tag([word])[0][1] not in pos_filter):
+        if (word.strip() not in cust_sw) or (pos_tag([word])[0][1] not in pos_filter):
             filtered_word_list.append(word)
     return filtered_word_list
 
@@ -62,13 +63,13 @@ def clean_text(text):
     clean_out = sample1_stem.apply(lambda x: ' '.join(x))
     return clean_out
 
-def main_clean():
+def main_clean(input_df):
+    hotel_rev_cl = clean_text(input_df['text'])
+    return hotel_rev_cl
+
+if __name__ == '__main__':
     reviews = pd.read_csv('../raw_data/deceptive-opinion.csv')
     y = reviews['deceptive']
     x = reviews.drop('deceptive', axis=1)
     x_tr, x_te, y_tr, y_te = train_test_split(x, y, test_size=0.2, random_state=444)
-    hotel_rev_cl = clean_text(x_tr['text'])
-    return hotel_rev_cl
-
-if __name__ == '__main__':
-    main_clean(hotel_reviews)
+    main_clean(x_tr)
