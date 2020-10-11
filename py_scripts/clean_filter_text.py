@@ -1,7 +1,6 @@
 import pandas as pd
 import re
 import string
-import numpy as np
 
 from nltk.tokenize import TreebankWordTokenizer
 from nltk.stem import PorterStemmer
@@ -39,11 +38,13 @@ def filter_words(text_tok):
     filtered_word_list=[]
     pos_filter = ['VB', 'VBN','VBD', 'VBG', 'VBP', 'VBZ', 'NNP', 'NNPS', 'NNP']
     cust_sw = stopwords.words('english')
-    hotel_sw = ['room','chicago','hotel','downtown', 'michigan', 'just',
-                'hard', 'rock', 'because', 'this']
+    hotel_sw = ['room','chicago','hotel','downtown', 'michigan',
+                'hard', 'rock', 'omni', 'conrad']
     cust_sw = cust_sw + hotel_sw
     for word in text_tok:
-        if (word.strip() not in cust_sw) or (pos_tag([word])[0][1] not in pos_filter):
+        if (word.strip() in cust_sw) or (pos_tag([word])[0][1] in pos_filter):
+            continue
+        else:
             filtered_word_list.append(word)
     return filtered_word_list
 
